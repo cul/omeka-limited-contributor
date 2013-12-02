@@ -16,40 +16,39 @@ if (!defined('LIMITED_CONTRIBUTOR_DIR')) define('LIMITED_CONTRIBUTOR_DIR', dirna
 
 // Access Control List
 require_once LIMITED_CONTRIBUTOR_DIR.'/helpers/Acl.php';
-require_once LIMITED_CONTRIBUTOR_DIR.'/assertions/LimitedContributor_Acl_Assert_RecordOwnership.php';
 
 class LimitedContributorPlugin extends Omeka_Plugin_AbstractPlugin
 {
 	protected $_hooks = array(
-		'initialize',
+		// 'initialize',
 		'define_acl',
-		'admin_items_show',
-		'admin_items_browse'
+		// 'admin_items_show',
+		// 'admin_items_browse'
 		);
 
-	public function hookAdminItemsShow() {
+	// public function hookAdminItemsShow() {
 
-		Vki::vox('adminitemshow');
-		$itemOwner = get_view()->limitedcontributor(get_current_record('item') );
-		$result = ($itemOwner == current_user() ) ? "The same" : false;
-		// echo get_view()->limitedcontributor(get_current_record('item') );
-		Vki::vox($result);
+	// 	Vki::vox('adminitemshow');
+	// 	$itemOwner = get_view()->limitedcontributor(get_current_record('item') );
+	// 	$result = ($itemOwner == current_user() ) ? "The same" : false;
+	// 	// echo get_view()->limitedcontributor(get_current_record('item') );
+	// 	Vki::vox($result);
 
-		return $result;
-	}
+	// 	return $result;
+	// }
 
-	public function hookAdminItemsBrowse() {
-		// Vki::vox('Browsing Simple');
-		$itemOwner = get_view()->limitedcontributor(get_current_record('item') );
-		$result = ($itemOwner == current_user() ) ? "The same" : false;
+	// public function hookAdminItemsBrowse() {
+	// 	// Vki::vox('Browsing Simple');
+	// 	$itemOwner = get_view()->limitedcontributor(get_current_record('item') );
+	// 	$result = ($itemOwner == current_user() ) ? "The same" : false;
 
-		Vki::vox($result);
-		return $result;
-	}
+	// 	Vki::vox($result);
+	// 	return $result;
+	// }
 
-	public function hookInitialize(){
-		$user = current_user();
-	}
+	// public function hookInitialize(){
+	// 	$user = current_user();
+	// }
 
 	/**
 	 * Define the Access Control List
@@ -57,9 +56,20 @@ class LimitedContributorPlugin extends Omeka_Plugin_AbstractPlugin
 	 * @return null
 	 */
 	public function hookDefineAcl($args){
+		require_once LIMITED_CONTRIBUTOR_DIR.'/assertions/LimitedContributor_Acl_Assert_RecordOwnership.php';
 		extract($args);
-		$limitedContributorAcl = new LimitedContributorAcl();
-		$limitedContributorAcl->defineAcl($acl);
+
+		$acl->deny(
+			array('contributor', 'researcher'),
+			'Items',
+			null,
+			new LimitedContributor_Acl_Assert_RecordOwnership
+			);
+
+		// Vki::vox($acl);
+		// $limitedContributorAcl = new LimitedContributorAcl();
+
+		// $limitedContributorAcl->defineAcl($acl);
 	}
 
 }

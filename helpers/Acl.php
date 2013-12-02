@@ -18,7 +18,6 @@ class LimitedContributorAcl {
 
 	function defineAcl($acl){
 
-
 		/////////////////////////////
 		// Modify Contributor role //
 		/////////////////////////////
