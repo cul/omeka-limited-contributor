@@ -40,7 +40,7 @@ class LimitedContributorPlugin extends Omeka_Plugin_AbstractPlugin
 	}
 
 	public function filterAdminNavigationMain($tabs) {
-		Vki::vox("filterAdminNavigationMain");
+// 		Vki::vox("filterAdminNavigationMain");
 		$user = current_user();
 		$tabs[] = array(
 				'label'   => __("Hame'e Malihini"),
@@ -53,7 +53,7 @@ class LimitedContributorPlugin extends Omeka_Plugin_AbstractPlugin
 
 	public function filterItemsBrowseParams($params)
 	{
-		Vki::vox('Filter item browse params');
+// 		Vki::vox('Filter item browse params');
 		//always sort by title instead of order
 		$params['sort_param'] = "Dublin Core,Title";
 
@@ -81,9 +81,9 @@ class LimitedContributorPlugin extends Omeka_Plugin_AbstractPlugin
 
 	public function hookInitialize(){
 		$user = current_user();
-		$db = $this->_helper->db->getDb();
-		$elementId = 30;
-		return var_dump( $db->getTable('Element')->find($elementId) );
+// 		$db = $this->_helper->db->getDb();
+// 		$elementId = 30;
+// 		return var_dump( $db->getTable('Element')->find($elementId) );
 		
 // 		add_plugin_hook('item_browse_sql', 'myplugin_item_browse_sql');
 
