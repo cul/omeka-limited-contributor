@@ -36,7 +36,10 @@ class LimitedContributorPlugin extends Omeka_Plugin_AbstractPlugin
 
 	public function concealDescription($text, $args)
 	{
-		return str_rot13($text);
+		if($text)
+		return 'Sorry, but you\'re not allowed.';//.str_rot13($text);
+		
+		else return $text;
 	}
 
 	public function filterAdminNavigationMain($tabs) {
@@ -99,7 +102,7 @@ class LimitedContributorPlugin extends Omeka_Plugin_AbstractPlugin
 		extract($args);
 
 		$acl->deny(
-				array('contributor'),
+				null,
 				'Items',
 				array('show')
 		);
