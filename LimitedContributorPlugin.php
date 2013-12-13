@@ -43,7 +43,7 @@ class LimitedContributorPlugin extends Omeka_Plugin_AbstractPlugin
 // 		Vki::vox("filterAdminNavigationMain");
 		$user = current_user();
 		$tabs[] = array(
-				'label'   => __("Hame'e Malihini"),
+				'label'   => __("Limited User"),
 				'uri'     => url('/users/edit/'.$user->id),
 				'visible' => true
 		);
@@ -99,13 +99,13 @@ class LimitedContributorPlugin extends Omeka_Plugin_AbstractPlugin
 		extract($args);
 
 		$acl->deny(
-				null,
+				array('contributor'),
 				'Items',
 				array('show')
 		);
 
 		$acl->allow(
-				null,
+				array('contributor'),
 				'Items',
 				array('show'),
 				new LimitedContributor_Acl_Assert_RecordOwnership()

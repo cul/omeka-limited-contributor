@@ -18,11 +18,14 @@ class LimitedContributor_Acl_Assert_RecordOwnership implements Zend_Acl_Assert_I
 			Zend_Acl_Resource_Interface $resource = null,
 			$privilege = null)
 	{
+		
+		return true;
 
 		if ($role instanceof User && $resource instanceof Item) {
 			//             Vki::vox(get_class_methods($resource) );
-			if ($resource->getOwner() == $role->id)
+			if ($resource->getOwner() == $role->id){
 				return true;
+		}
 			else
 				return false;
 		}
