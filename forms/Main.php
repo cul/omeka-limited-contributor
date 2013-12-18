@@ -7,7 +7,7 @@
  * @package CsvImport
  */
 
-class LimitedContributorCollaborators_Form_Main extends Omeka_Form
+class LimitedContributorCollaborators_Form_Main extends Omeka_Form_Admin
 {
     private $_columnDelimiter;
     private $_fileDelimiter;
@@ -34,34 +34,26 @@ class LimitedContributorCollaborators_Form_Main extends Omeka_Form
         $values = get_db()->getTable('ItemType')->findPairsForSelectForm();
         $values = array('' => __('Select Item Type')) + $values;
         
-        $this->addElement('checkbox', 'lc-checkbox', array(
-            'label' => __('Labels are nice.'), 
-            'description'=> __('No, really. Labels clarify what a control does.'),
-            'value' => true)
+        $this->addElement('text', 'lc-text', array(
+        		'label' => __('Users to share with'),
+        		'description'=> __('These users will be able to see everything you post.'),
+        		'value' => true)
         );
 
-        $values = array('foo', 'bar', 'baz');
-        $values = array('' => __('Select Collection')) + $values;
-
-        $this->addElement('select', 'lc-select', array(
-            'label' => __('Combo boxes are also available'),
-            'multiOptions' => $values,
-        ));
-
-        
+                
         $this->applyOmekaStyles();
         $this->setAutoApplyOmekaStyles(false);
         
         $submit = $this->createElement('submit', 
                                        'submit', 
-                                       array('label' => __('Next'),
+                                       array('label' => __('Save Changes'),
                                              'class' => 'submit submit-medium'));
             
         
         $submit->setDecorators(array('ViewHelper',
                                       array('HtmlTag', 
                                             array('tag' => 'div', 
-                                                  'class' => 'csvimportnext'))));
+                                                  'class' => 'limitedcontributor'))));
                                             
         $this->addElement($submit);
     }

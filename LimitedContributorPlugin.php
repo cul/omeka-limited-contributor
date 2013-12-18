@@ -29,7 +29,7 @@ class LimitedContributorPlugin extends Omeka_Plugin_AbstractPlugin
 	protected $_filters = array(
 			'admin_navigation_main',
 			'admin_items_browse',
-			'concealDescription' => array('Display', 'Item', 'Dublin Core', 'Title'),
+			//'concealDescription' => array('Display', 'Item', 'Dublin Core', 'Title'),
 			// 'items_browse_params'
 			'items_browse'
 	);
@@ -83,13 +83,42 @@ class LimitedContributorPlugin extends Omeka_Plugin_AbstractPlugin
 	}
 
 	public function hookInitialize(){
-		$user = current_user();
-// 		$db = $this->_helper->db->getDb();
-// 		$elementId = 30;
-// 		return var_dump( $db->getTable('Element')->find($elementId) );
-		
-// 		add_plugin_hook('item_browse_sql', 'myplugin_item_browse_sql');
 
+		$user = current_user();
+	}
+	
+	/**
+	 * Create exhibit and record tables.
+	 */
+	public function hookInstall()
+	{
+	
+		$this->_db->query(<<<SQL
+        CREATE TABLE IF NOT EXISTS
+            {$this->_db->prefix}limited_contributor (
+	
+            id                      INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+           	owner_id                INT(10) UNSIGNED NOT NULL,
+            user_id                INT(10) UNSIGNED NOT NULL,
+	
+            PRIMARY KEY             (id)
+	
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+SQL
+		);
+	
+	}
+	
+	
+	/**
+	 * Drop exhibit and record tables.
+	 */
+	public function hookUninstall()
+	{
+		$this->_db->query(<<<SQL
+        DROP TABLE {$this->_db->prefix}limited_contributor
+SQL
+		);
 	}
 
 	/**
