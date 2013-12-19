@@ -23,7 +23,9 @@ class LimitedContributorPlugin extends Omeka_Plugin_AbstractPlugin
 			'initialize',
 			'define_acl',
 			// 'admin_items_show',
-			'admin_items_browse'
+			'admin_items_browse',
+			'install',
+			'uninstall'
 	);
 
 	protected $_filters = array(
@@ -95,7 +97,7 @@ class LimitedContributorPlugin extends Omeka_Plugin_AbstractPlugin
 	
 		$this->_db->query(<<<SQL
         CREATE TABLE IF NOT EXISTS
-            {$this->_db->prefix}limited_contributor (
+            {$this->_db->prefix}limited_contributor_lists (
 	
             id                      INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
            	owner_id                INT(10) UNSIGNED NOT NULL,

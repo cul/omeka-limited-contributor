@@ -27,8 +27,12 @@ class LimitedContributor_IndexController extends Omeka_Controller_AbstractAction
 	 * @return CsvImport_Form_Main
 	 */
 	protected function _getMainForm() {
+
 		require_once LIMITED_CONTRIBUTOR_DIR . '/forms/Main.php';
-		$form = new LimitedContributorCollaborators_Form_Main();
+		
+		$formOptions = array('type' => 'limited_contributor_settings', 'hasPublicPage' => true);
+		$form = new LimitedContributorCollaborators_Form_Main($formOptions);
+
 		return $form;
 	}
 	/**
@@ -37,22 +41,71 @@ class LimitedContributor_IndexController extends Omeka_Controller_AbstractAction
 	public function indexAction() {
 		$form = $this->_getMainForm();
 		$this->view->form = $form;
+		
+		// Clear the list of users
+		
 
 		// Check if the form was submitted.
 		if ($this->getRequest()->isPost()) {
-			// Set the POST data to the record.
-			$record->setPostData($_POST);
-			// Save the record. Passing false prevents thrown exceptions.
-			if ($record->save(false)) {
-				$successMessage = $this->_getEditSuccessMessage($record);
-				if ($successMessage) {
-					$this->_helper->flashMessenger($successMessage, 'success');
+			// Clear previous users in list
+			$db = get_db();
+			$user = current_user();
+			$sharedWithList = $db->getTable("LimitedContributorList")->findBy(array('owner_id'=> $user->id ) );
+			
+			foreach($sharedWithList as $record)
+				$record->delete();
+			
+			// Build new list to save
+			$sharedWith = preg_replace('/\s+/', '', $_POST['lcsharewith']);
+			$users = explode(',', $sharedWith);
+			
+				
+			//         	$sharedWith .= $user;
+			
+			// Create a record for each user in the CSV input
+			foreach($users as $user){
+				// Create a lclist and find the requested user
+				$list = new LimitedContributorList;
+				$isUser = $list->getTable("user")->findBy(array('username'=>$user), 1);
+
+				// If the user given is actually a user add that to the list
+				if($isUser[0])
+				{
+					$list->owner_id = current_user()->id;
+					$list->user_id = $isUser[0]->id;
+					
+ 					$list->save();
 				}
-				$this->_redirectAfterEdit($record);
-				// Flash an error if the record does not validate.
-			} else {
-				$this->_helper->flashMessenger($record->getErrors());
+				
+				
+				
 			}
+			return;
+			
+			// Create a new page.
+			$list = new LimitedContributorList;
+			
+			// Set the created by user ID.
+			$list->owner_id = current_user()->id;
+// 			$list->user_id = ;
+			
+			// Save it
+			$list->getTable("{$list->getDb()->prefix}limited_contributor");
+			$list->save(false);
+			
+// 			// Set the POST data to the record.
+// 			$record->setPostData($_POST);
+// 			// Save the record. Passing false prevents thrown exceptions.
+// 			if ($record->save(false)) {
+// 				$successMessage = $this->_getEditSuccessMessage($record);
+// 				if ($successMessage) {
+// 					$this->_helper->flashMessenger($successMessage, 'success');
+// 				}
+// 				$this->_redirectAfterEdit($record);
+// 				// Flash an error if the record does not validate.
+// 			} else {
+// 				$this->_helper->flashMessenger($record->getErrors());
+// 			}
 		}
 
 	}

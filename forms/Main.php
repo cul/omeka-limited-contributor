@@ -34,10 +34,11 @@ class LimitedContributorCollaborators_Form_Main extends Omeka_Form_Admin
         $values = get_db()->getTable('ItemType')->findPairsForSelectForm();
         $values = array('' => __('Select Item Type')) + $values;
         
-        $this->addElement('text', 'lc-text', array(
+        
+        $this->addElement('text', 'lc-share-with', array(
         		'label' => __('Users to share with'),
         		'description'=> __('These users will be able to see everything you post.'),
-        		'value' => true)
+        		'value' => LimitedContributorList::getSharedList())
         );
 
                 
