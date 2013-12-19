@@ -45,18 +45,6 @@ class LimitedContributorCollaborators_Form_Main extends Omeka_Form_Admin
         $this->applyOmekaStyles();
         $this->setAutoApplyOmekaStyles(false);
         
-        $submit = $this->createElement('submit', 
-                                       'submit', 
-                                       array('label' => __('Save Changes'),
-                                             'class' => 'submit submit-medium'));
-            
-        
-        $submit->setDecorators(array('ViewHelper',
-                                      array('HtmlTag', 
-                                            array('tag' => 'div', 
-                                                  'class' => 'limitedcontributor'))));
-                                            
-        $this->addElement($submit);
     }
 
 

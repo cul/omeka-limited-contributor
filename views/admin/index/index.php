@@ -11,8 +11,6 @@
 //  	var_dump($this->form);
 ?>
 
-<p>My page</p>
-
 <?php
 	echo foot();
 ?>

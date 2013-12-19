@@ -21,7 +21,7 @@ class LimitedContributorPlugin extends Omeka_Plugin_AbstractPlugin
 {
 	protected $_hooks = array(
 			'initialize',
-			'define_acl',
+// 			'define_acl',
 			// 'admin_items_show',
 			'admin_items_browse',
 			'install',
@@ -39,17 +39,17 @@ class LimitedContributorPlugin extends Omeka_Plugin_AbstractPlugin
 	public function concealDescription($text, $args)
 	{
 		if($text)
-		return 'Sorry, but you\'re not allowed.';//.str_rot13($text);
-		
+			return 'Sorry, but you\'re not allowed.';//.str_rot13($text);
+
 		else return $text;
 	}
 
 	public function filterAdminNavigationMain($tabs) {
-// 		Vki::vox("filterAdminNavigationMain");
+		// 		Vki::vox("filterAdminNavigationMain");
 		$user = current_user();
 		$tabs[] = array(
-				'label'   => __("Limited User"),
-				'uri'     => url('/users/edit/'.$user->id),
+				'label'   => __("Share List"),
+				'uri'     => url('limited-contributor'),
 				'visible' => true
 		);
 
@@ -58,7 +58,7 @@ class LimitedContributorPlugin extends Omeka_Plugin_AbstractPlugin
 
 	public function filterItemsBrowseParams($params)
 	{
-// 		Vki::vox('Filter item browse params');
+		// 		Vki::vox('Filter item browse params');
 		//always sort by title instead of order
 		$params['sort_param'] = "Dublin Core,Title";
 
@@ -88,37 +88,37 @@ class LimitedContributorPlugin extends Omeka_Plugin_AbstractPlugin
 
 		$user = current_user();
 	}
-	
+
 	/**
 	 * Create exhibit and record tables.
 	 */
 	public function hookInstall()
 	{
-	
+
 		$this->_db->query(<<<SQL
         CREATE TABLE IF NOT EXISTS
             {$this->_db->prefix}limited_contributor_lists (
-	
+
             id                      INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
            	owner_id                INT(10) UNSIGNED NOT NULL,
             user_id                INT(10) UNSIGNED NOT NULL,
-	
+
             PRIMARY KEY             (id)
-	
+
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 SQL
 		);
-	
+
 	}
-	
-	
+
+
 	/**
 	 * Drop exhibit and record tables.
 	 */
 	public function hookUninstall()
 	{
 		$this->_db->query(<<<SQL
-        DROP TABLE {$this->_db->prefix}limited_contributor
+        DROP TABLE {$this->_db->prefix}limited_contributor_lists
 SQL
 		);
 	}
@@ -144,51 +144,5 @@ SQL
 				array('show'),
 				new LimitedContributor_Acl_Assert_RecordOwnership()
 		);
-	}
-}
-
-/**
- * Experimental Section
- */
-
-function myplugin_item_browse_sql()
-{
-	$sortDir = 'ASC';
-	// Get the db object
-	$db = get_db();
-	
-	// Get the request to see if "starts_with" is a parameter
-	if ($request = Zend_Controller_Front::getInstance()->getRequest()) {
-		$startsWithString = $request->get('starts_with');
-		if(!empty($startsWithString)) {
-			$startsWithData = explode(',', $startsWithString);
-		}
-	}
-	
-	// What's the deal with no $ before the var?
-	if(!startsWithData) {
-		$startsWithData = isset($params['starts_with']) ? explode(',', $params['starts_with']) : false;
-	}
-	if($startsWithData) {
-		//ItemTable builds in a order by id, which we don't want
-		$select->reset('order');
-
-		//data like 'Element Set', 'Element', 'Character'
-		if(count($startsWithData) == 3) {
-			$startsWith = $startsWithData[2];
-			$element = $db->getTable('Element')->findByElementSetNameAndElementName($startsWithData[0], $startsWithData[1]);
-			return Vki::vox($element);
-			if ($element) {
-				$recordTypeId = $db->getTable('RecordType')->findIdFromName('Item');
-				$select->joinLeft(array('et_sort' => $db->ElementText),
-						"et_sort.record_id = i.id AND et_sort.record_type_id = {$recordTypeId} AND et_sort.element_id = {$element->id}",
-						array())
-						->where("et_sort.text REGEXP '^$startsWith'")
-						->group('i.id')
-						->order("et_sort.text $sortDir");
-			}
-		} else {
-			throw new Exception("Starts With data must be like 'Element Set', 'Element', 'Character' ");
-		}
 	}
 }
