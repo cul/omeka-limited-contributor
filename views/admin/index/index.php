@@ -8,7 +8,6 @@
 	echo head($page_head);
  	echo common('limitedcontributor-nav'); 
  	echo $this->form;
-//  	var_dump($this->form);
 ?>
 
 <?php

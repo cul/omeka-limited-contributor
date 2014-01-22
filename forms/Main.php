@@ -37,7 +37,7 @@ class LimitedContributorCollaborators_Form_Main extends Omeka_Form_Admin
         
         $this->addElement('text', 'lc-share-with', array(
         		'label' => __('Users to share with'),
-        		'description'=> __('These users will be able to see everything you post.'),
+        		'description'=> __('Enter users, separated by commas, to see all your items.'),
         		'value' => LimitedContributorList::getSharedList())
         );
 

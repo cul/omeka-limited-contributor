@@ -23,17 +23,17 @@ class LimitedContributorPlugin extends Omeka_Plugin_AbstractPlugin
 			'initialize',
 // 			'define_acl',
 			// 'admin_items_show',
-			'admin_items_browse',
+// 			'admin_items_browse',
 			'install',
 			'uninstall'
 	);
 
 	protected $_filters = array(
 			'admin_navigation_main',
-			'admin_items_browse',
+// 			'admin_items_browse',
 			//'concealDescription' => array('Display', 'Item', 'Dublin Core', 'Title'),
 			// 'items_browse_params'
-			'items_browse'
+// 			'items_browse'
 	);
 
 	public function concealDescription($text, $args)
@@ -45,7 +45,6 @@ class LimitedContributorPlugin extends Omeka_Plugin_AbstractPlugin
 	}
 
 	public function filterAdminNavigationMain($tabs) {
-		// 		Vki::vox("filterAdminNavigationMain");
 		$user = current_user();
 		$tabs[] = array(
 				'label'   => __("Share List"),
@@ -65,24 +64,6 @@ class LimitedContributorPlugin extends Omeka_Plugin_AbstractPlugin
 		return $params;
 	}
 
-	public function filterItemsBrowse($params) {
-		Vki::vox("Filter Items Browse");
-		return "Other stuff";
-	}
-
-	public function filterAdminItemsBrowse($params) {
-		Vki::vox("Filter Admin Items Browse");
-		return "Other stuff";
-	}
-
-	public function hookAdminItemsBrowse($params) {
-
-		$itemOwner = get_view()->limitedcontributor(get_current_record('item') );
-		$result = ($itemOwner == current_user() ) ? "The same" : "Not the users";
-		Vki::vox($result, "Hook Admin Items Browse Result: ");
-
-		return $result;
-	}
 
 	public function hookInitialize(){
 
