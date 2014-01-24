@@ -1,0 +1,5 @@
+# Ignore these
+.DS_Store
+*.swp
+*.lock
+.profile

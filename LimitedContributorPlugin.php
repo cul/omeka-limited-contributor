@@ -16,92 +16,39 @@ if (!defined('LIMITED_CONTRIBUTOR_DIR')) define('LIMITED_CONTRIBUTOR_DIR', dirna
 
 // Access Control List
 require_once LIMITED_CONTRIBUTOR_DIR.'/helpers/Acl.php';
+require_once LIMITED_CONTRIBUTOR_DIR.'/assertions/LimitedContributor_Acl_Assert_RecordOwnership.php';
 
 class LimitedContributorPlugin extends Omeka_Plugin_AbstractPlugin
 {
 	protected $_hooks = array(
-			'initialize',
-// 			'define_acl',
-			// 'admin_items_show',
-// 			'admin_items_browse',
-			'install',
-			'uninstall'
-	);
-
-	protected $_filters = array(
-			'admin_navigation_main',
-// 			'admin_items_browse',
-			//'concealDescription' => array('Display', 'Item', 'Dublin Core', 'Title'),
-			// 'items_browse_params'
-// 			'items_browse'
-	);
-
-	public function concealDescription($text, $args)
-	{
-		if($text)
-			return 'Sorry, but you\'re not allowed.';//.str_rot13($text);
-
-		else return $text;
-	}
-
-	public function filterAdminNavigationMain($tabs) {
-		$user = current_user();
-		$tabs[] = array(
-				'label'   => __("Share List"),
-				'uri'     => url('limited-contributor'),
-				'visible' => true
+		'initialize',
+		'define_acl',
+		'admin_items_show',
+		'admin_items_browse'
 		);
 
-		return $tabs;
+	public function hookAdminItemsShow() {
+
+		Vki::vox('adminitemshow');
+		$itemOwner = get_view()->limitedcontributor(get_current_record('item') );
+		$result = ($itemOwner == current_user() ) ? "The same" : false;
+		// echo get_view()->limitedcontributor(get_current_record('item') );
+		Vki::vox($result);
+
+		return $result;
 	}
 
-	public function filterItemsBrowseParams($params)
-	{
-		// 		Vki::vox('Filter item browse params');
-		//always sort by title instead of order
-		$params['sort_param'] = "Dublin Core,Title";
+	public function hookAdminItemsBrowse() {
+		// Vki::vox('Browsing Simple');
+		$itemOwner = get_view()->limitedcontributor(get_current_record('item') );
+		$result = ($itemOwner == current_user() ) ? "The same" : false;
 
-		return $params;
+		Vki::vox($result);
+		return $result;
 	}
-
 
 	public function hookInitialize(){
-
 		$user = current_user();
-	}
-
-	/**
-	 * Create exhibit and record tables.
-	 */
-	public function hookInstall()
-	{
-
-		$this->_db->query(<<<SQL
-        CREATE TABLE IF NOT EXISTS
-            {$this->_db->prefix}limited_contributor_lists (
-
-            id                      INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-           	owner_id                INT(10) UNSIGNED NOT NULL,
-            user_id                INT(10) UNSIGNED NOT NULL,
-
-            PRIMARY KEY             (id)
-
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-SQL
-		);
-
-	}
-
-
-	/**
-	 * Drop exhibit and record tables.
-	 */
-	public function hookUninstall()
-	{
-		$this->_db->query(<<<SQL
-        DROP TABLE {$this->_db->prefix}limited_contributor_lists
-SQL
-		);
 	}
 
 	/**
@@ -110,20 +57,9 @@ SQL
 	 * @return null
 	 */
 	public function hookDefineAcl($args){
-		require_once LIMITED_CONTRIBUTOR_DIR.'/assertions/LimitedContributor_Acl_Assert_RecordOwnership.php';
 		extract($args);
-
-		$acl->deny(
-				null,
-				'Items',
-				array('show')
-		);
-
-		$acl->allow(
-				array('contributor'),
-				'Items',
-				array('show'),
-				new LimitedContributor_Acl_Assert_RecordOwnership()
-		);
+		$limitedContributorAcl = new LimitedContributorAcl();
+		$limitedContributorAcl->defineAcl($acl);
 	}
+
 }
