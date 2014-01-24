@@ -7,7 +7,7 @@
  * @package CsvImport
  */
 
-class LimitedContributorCollaborators_Form_Main extends Omeka_Form
+class LimitedContributorCollaborators_Form_Main extends Omeka_Form_Admin
 {
     private $_columnDelimiter;
     private $_fileDelimiter;
@@ -34,36 +34,17 @@ class LimitedContributorCollaborators_Form_Main extends Omeka_Form
         $values = get_db()->getTable('ItemType')->findPairsForSelectForm();
         $values = array('' => __('Select Item Type')) + $values;
         
-        $this->addElement('checkbox', 'lc-checkbox', array(
-            'label' => __('Labels are nice.'), 
-            'description'=> __('No, really. Labels clarify what a control does.'),
-            'value' => true)
+        
+        $this->addElement('text', 'lc-share-with', array(
+        		'label' => __('Users to share with'),
+        		'description'=> __('Enter users, separated by commas, to see all your items.'),
+        		'value' => LimitedContributorList::getSharedList())
         );
 
-        $values = array('foo', 'bar', 'baz');
-        $values = array('' => __('Select Collection')) + $values;
-
-        $this->addElement('select', 'lc-select', array(
-            'label' => __('Combo boxes are also available'),
-            'multiOptions' => $values,
-        ));
-
-        
+                
         $this->applyOmekaStyles();
         $this->setAutoApplyOmekaStyles(false);
         
-        $submit = $this->createElement('submit', 
-                                       'submit', 
-                                       array('label' => __('Next'),
-                                             'class' => 'submit submit-medium'));
-            
-        
-        $submit->setDecorators(array('ViewHelper',
-                                      array('HtmlTag', 
-                                            array('tag' => 'div', 
-                                                  'class' => 'csvimportnext'))));
-                                            
-        $this->addElement($submit);
     }
 
 
